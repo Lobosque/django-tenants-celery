@@ -3,7 +3,7 @@ from __future__ import absolute_import
 try:
     from celery import Celery
 except ImportError:
-    raise ImportError("celery is required to use tenant_schemas_celery")
+    raise ImportError("celery is required to use django_tenants_celery")
 
 from django.db import connection
 
@@ -15,7 +15,7 @@ def switch_schema(task, kwargs, **kw):
     # Lazily load needed functions, as they import django model functions which
     # in turn load modules that need settings to be loaded and we can't
     # guarantee this module was loaded when the settings were ready.
-    from tenant_schemas.utils import get_public_schema_name, get_tenant_model
+    from django_tenants.utils import get_public_schema_name, get_tenant_model
 
     old_schema = (connection.schema_name, connection.include_public_schema)
     setattr(task, '_old_schema', old_schema)
@@ -37,7 +37,7 @@ def switch_schema(task, kwargs, **kw):
 
 def restore_schema(task, **kwargs):
     """ Switches the schema back to the one from before running the task. """
-    from tenant_schemas.utils import get_public_schema_name
+    from django_tenants.utils import get_public_schema_name
 
     schema_name, include_public = getattr(task,
                                           '_old_schema',
@@ -51,14 +51,14 @@ def restore_schema(task, **kwargs):
 
 
 task_prerun.connect(switch_schema, sender=None,
-                    dispatch_uid='tenant_schemas_switch_schema')
+                    dispatch_uid='django_tenants_switch_schema')
 
 task_postrun.connect(restore_schema, sender=None,
-                    dispatch_uid='tenant_schemas_restore_schema')
+                    dispatch_uid='django_tenants_restore_schema')
 
 
 class CeleryApp(Celery):
     def create_task_cls(self):
-        return self.subclass_with_self('tenant_schemas_celery.task:TenantTask',
+        return self.subclass_with_self('django_tenants_celery.task:TenantTask',
                                        abstract=True, name='TenantTask',
                                        attribute='_app')

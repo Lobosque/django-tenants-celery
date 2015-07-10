@@ -2,9 +2,9 @@ from django.db import connection
 from django.utils.unittest import skipIf
 
 
-from tenant_schemas.tests.models import Tenant, DummyModel
-from tenant_schemas.tests.testcases import BaseTestCase
-from tenant_schemas.utils import get_public_schema_name
+from django_tenants.tests.models import Tenant, DummyModel
+from django_tenants.tests.testcases import BaseTestCase
+from django_tenants.utils import get_public_schema_name
 
 try:
     from .app import CeleryApp

@@ -2,7 +2,7 @@ tenant-schemas-celery
 =====================
 
 Celery application implementation that allows celery tasks to cooperate with
-multi-tenancy provided by [django-tenant-schemas](https://github.com/bernardopires/django-tenant-schemas) package.
+multi-tenancy provided by [django-tenants](https://github.com/tomturner/django-tenants) package.
 
 Installation
 ------------
@@ -22,7 +22,7 @@ Usage
 
    from django.conf import settings
 
-   from tenant_schemas_celery.app import CeleryApp
+   from django_tenants_celery.app import CeleryApp
 
    app = CeleryApp()
    app.config_from_object('django.conf:settings')
